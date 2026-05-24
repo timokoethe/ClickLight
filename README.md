@@ -6,9 +6,7 @@ It was built for the common demo problem where your physical click happens sligh
 
 ## Demo
 
-[![ClickLight menu and controls](docs/assets/clicklight-menu.png)](docs/assets/clicklight-demo.mp4)
-
-[Watch the demo video](docs/assets/clicklight-demo.mp4)
+![ClickLight showing click highlights from the macOS menu bar](docs/assets/clicklight-demo.gif)
 
 ## Features
 
