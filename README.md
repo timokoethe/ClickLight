@@ -1,103 +1,45 @@
 # ClickLight
 
-ClickLight is a tiny native macOS menu-bar app for live coding demos. It highlights mouse clicks anywhere on your Mac so viewers can see exactly when you pressed, released, right-clicked, or dragged.
+ClickLight is a tiny native macOS menu-bar app for live coding demos. It highlights clicks anywhere on your Mac so viewers can see when you actually pressed, even if the UI responds slowly.
 
-It was built for the common demo problem where your physical click happens slightly before the UI changes on screen.
+It is personal software: one small presentation annoyance, fixed directly.
 
 ## Demo
 
 ![ClickLight showing click highlights from the macOS menu bar](docs/assets/clicklight-demo.gif)
 
-## Features
+## What It Does
 
-- Global click highlighting across macOS apps, including browsers and editors
-- Separate visuals for press, release, right-click, and drag
-- Menu-bar controls for size, intensity, duration, and event types
-- Transparent overlay windows for each display
-- Accessibility permission flow for global mouse capture
-- No Xcode project required
+- shows click highlights across macOS apps
+- distinguishes press, release, right-click, and drag
+- lets you tune size, duration, and intensity from the menu bar
+- works as a local Swift/AppKit app, no Xcode project required
 
-## Requirements
+## Install
 
-- macOS 14 or newer
-- Apple Swift toolchain / Command Line Tools
+ClickLight does not have a packaged installer yet. Build it locally, copy the app into Applications, then grant Accessibility permission:
 
-You can check Swift availability with:
+[Installation](docs/INSTALLATION.md)
 
-```bash
-swift --version
-```
+## Modify It
 
-## Build And Run
+The project is intentionally small so you or an agent can change it without much ceremony:
 
-From the project root:
+[Local Development](docs/LOCAL_DEVELOPMENT.md)
+
+The short version:
 
 ```bash
-chmod +x build-app.sh
 ./build-app.sh
 open ClickLight.app
 ```
 
-The build script compiles the Swift package in release mode and creates `ClickLight.app` in the project folder.
+## How It Is Built
 
-## Install
+ClickLight is a Swift Package Manager executable wrapped into a macOS `.app` bundle by `build-app.sh`.
 
-ClickLight does not have a packaged installer yet. To install it locally, build the app and copy it into your Applications folder:
-
-```bash
-./build-app.sh
-mkdir -p "$HOME/Applications"
-cp -R ClickLight.app "$HOME/Applications/ClickLight.app"
-open "$HOME/Applications/ClickLight.app"
-```
-
-You can also drag `ClickLight.app` into `/Applications` in Finder.
-
-On first launch, macOS may ask for Accessibility access because ClickLight listens for global mouse clicks. If clicks do not show highlights, open:
-
-```text
-System Settings -> Privacy & Security -> Accessibility
-```
-
-Then enable `ClickLight`, quit the app from the menu bar, and reopen it.
-
-## How It Works
-
-ClickLight is a native Swift/AppKit app. It uses:
-
-- `CGEventTap` for low-level global mouse events
-- `NSEvent.addGlobalMonitorForEvents` as a fallback capture path
-- transparent borderless `NSWindow` overlays on each screen
-- AppKit drawing for the pulse animations
-- `NSStatusItem` for the menu-bar controls
-
-For more detail on how this is built without an Xcode project, read [Building Without Xcode](docs/BUILDING_WITHOUT_XCODE.md).
-
-For installation steps, read [Installation](docs/INSTALLATION.md).
-
-For local development and iteration instructions, read [Local Development](docs/LOCAL_DEVELOPMENT.md).
-
-## Project Layout
-
-```text
-.
-├── Package.swift
-├── Info.plist
-├── build-app.sh
-├── Sources/ClickLight
-│   ├── AppDelegate.swift
-│   ├── ClickEventTap.swift
-│   ├── ClickOverlayView.swift
-│   ├── ClickOverlayWindow.swift
-│   ├── OverlayCoordinator.swift
-│   ├── SettingsStore.swift
-│   └── StatusController.swift
-└── docs
-    ├── BUILDING_WITHOUT_XCODE.md
-    ├── INSTALLATION.md
-    └── LOCAL_DEVELOPMENT.md
-```
+[Building Without Xcode](docs/BUILDING_WITHOUT_XCODE.md)
 
 ## License
 
-ClickLight is open source under the [MIT License](LICENSE).
+MIT. See [LICENSE](LICENSE).

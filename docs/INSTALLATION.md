@@ -2,49 +2,25 @@
 
 ClickLight does not currently ship with a signed installer or notarized release package.
 
-For now, installing it means building the app locally and copying `ClickLight.app` into an Applications folder.
+For now, install it by building the app locally and copying `ClickLight.app` into an Applications folder.
 
-## Build
+## Steps
 
 From the project root:
 
 ```bash
 chmod +x build-app.sh
 ./build-app.sh
-```
-
-This creates:
-
-```text
-ClickLight.app
-```
-
-## Install For Your User
-
-The easiest local install path is `~/Applications`:
-
-```bash
 mkdir -p "$HOME/Applications"
 cp -R ClickLight.app "$HOME/Applications/ClickLight.app"
 open "$HOME/Applications/ClickLight.app"
 ```
 
-This does not require administrator access.
-
-## Install For All Users
-
-You can also drag `ClickLight.app` into `/Applications` using Finder.
-
-From Terminal, installing into `/Applications` may require administrator privileges:
-
-```bash
-sudo cp -R ClickLight.app /Applications/ClickLight.app
-open /Applications/ClickLight.app
-```
+You can also drag `ClickLight.app` into `/Applications` in Finder.
 
 ## Accessibility Permission
 
-ClickLight needs Accessibility permission to detect mouse clicks outside its own menu-bar app.
+ClickLight needs Accessibility permission to detect clicks outside its own menu-bar app.
 
 After launching ClickLight, open:
 
@@ -52,11 +28,9 @@ After launching ClickLight, open:
 System Settings -> Privacy & Security -> Accessibility
 ```
 
-Enable `ClickLight`.
+Enable `ClickLight`, then quit ClickLight from the menu bar and reopen it.
 
-Then quit ClickLight from the menu-bar menu and reopen it.
-
-## Verify It Works
+## Verify
 
 Click the ClickLight menu-bar item and choose:
 
@@ -64,6 +38,4 @@ Click the ClickLight menu-bar item and choose:
 Test Pulse at Pointer
 ```
 
-If you see a pulse, the overlay is working.
-
-If normal clicks still do not show pulses, check that Accessibility permission is enabled for the same copy of `ClickLight.app` that you launched.
+If you see a pulse, the overlay is working. If normal clicks still do not show pulses, check that Accessibility permission is enabled for the same copy of `ClickLight.app` that you launched.
