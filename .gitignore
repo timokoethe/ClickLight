@@ -4,3 +4,5 @@ ClickLight.app/
 ClickLight.zip
 *.xcuserdata/
 DerivedData/
+.vscode/
+dist/
