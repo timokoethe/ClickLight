@@ -50,6 +50,10 @@ See [Releasing](docs/RELEASING.md).
 
 ## Uninstall
 
+If you installed ClickLight manually, see [Remove Manual Install](docs/MANUAL_INSTALL.md#remove-manual-install).
+
+If you installed ClickLight with Homebrew:
+
 ```bash
 brew uninstall --cask clicklight
 ```
