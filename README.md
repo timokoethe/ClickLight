@@ -1,30 +1,83 @@
 # ClickLight
 
-ClickLight is a tiny macOS menu-bar app for live coding demos. It shows an immediate visual pulse at the cursor when you press, release, right-click, or drag, so viewers can distinguish your physical click from the UI response.
+ClickLight is a tiny native macOS menu-bar app for live coding demos. It highlights mouse clicks anywhere on your Mac so viewers can see exactly when you pressed, released, right-clicked, or dragged.
 
-## Build
+It was built for the common demo problem where your physical click happens slightly before the UI changes on screen.
+
+## Features
+
+- Global click highlighting across macOS apps, including browsers and editors
+- Separate visuals for press, release, right-click, and drag
+- Menu-bar controls for size, intensity, duration, and event types
+- Transparent overlay windows for each display
+- Accessibility permission flow for global mouse capture
+- No Xcode project required
+
+## Requirements
+
+- macOS 14 or newer
+- Apple Swift toolchain / Command Line Tools
+
+You can check Swift availability with:
+
+```bash
+swift --version
+```
+
+## Build And Run
+
+From the project root:
 
 ```bash
 chmod +x build-app.sh
 ./build-app.sh
+open ClickLight.app
 ```
 
-The script creates `ClickLight.app` in this folder.
+The build script compiles the Swift package in release mode and creates `ClickLight.app` in the project folder.
 
-## Run
+On first launch, macOS may ask for Accessibility access. If clicks do not show highlights, open:
 
-Open `ClickLight.app`. macOS may ask for Accessibility permission so the app can listen for global mouse events. If the app does not see clicks, open:
-
+```text
 System Settings -> Privacy & Security -> Accessibility
+```
 
-and enable ClickLight.
+Then enable `ClickLight`, quit the app from the menu bar, and reopen it.
 
-## Controls
+## How It Works
 
-The menu-bar item lets you:
+ClickLight is a native Swift/AppKit app. It uses:
 
-- enable or disable highlights
-- change size, intensity, and duration
-- toggle press, release, right-click, and drag visuals
-- reopen the permissions prompt
-- quit the app
+- `CGEventTap` for low-level global mouse events
+- `NSEvent.addGlobalMonitorForEvents` as a fallback capture path
+- transparent borderless `NSWindow` overlays on each screen
+- AppKit drawing for the pulse animations
+- `NSStatusItem` for the menu-bar controls
+
+For more detail on how this is built without an Xcode project, read [Building Without Xcode](docs/BUILDING_WITHOUT_XCODE.md).
+
+For local development and iteration instructions, read [Local Development](docs/LOCAL_DEVELOPMENT.md).
+
+## Project Layout
+
+```text
+.
+├── Package.swift
+├── Info.plist
+├── build-app.sh
+├── Sources/ClickLight
+│   ├── AppDelegate.swift
+│   ├── ClickEventTap.swift
+│   ├── ClickOverlayView.swift
+│   ├── ClickOverlayWindow.swift
+│   ├── OverlayCoordinator.swift
+│   ├── SettingsStore.swift
+│   └── StatusController.swift
+└── docs
+    ├── BUILDING_WITHOUT_XCODE.md
+    └── LOCAL_DEVELOPMENT.md
+```
+
+## License
+
+ClickLight is open source under the [MIT License](LICENSE).
