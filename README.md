@@ -23,6 +23,7 @@ brew install --cask aurorascharff/clicklight/clicklight
 - Click highlights across macOS apps
 - Separate visuals for press, release, right-click, and drag
 - Menu-bar controls for size, duration, and intensity
+- Optional compact menu-bar icon
 - Test pulse for verifying overlay behavior
 - Native Swift/AppKit app
 - No Xcode project required

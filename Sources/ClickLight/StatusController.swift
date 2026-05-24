@@ -31,8 +31,8 @@ final class StatusController {
 
     func start() {
         statusItem.button?.image = NSImage(systemSymbolName: "cursorarrow.click.2", accessibilityDescription: "ClickLight")
-        statusItem.button?.imagePosition = .imageLeading
-        statusItem.button?.title = "ClickLight"
+        statusItem.button?.toolTip = "ClickLight"
+        applyStatusItemAppearance(settingsStore.settings)
         rebuildMenu()
 
         NotificationCenter.default.addObserver(
@@ -44,6 +44,7 @@ final class StatusController {
     }
 
     @objc private func settingsDidChange() {
+        applyStatusItemAppearance(settingsStore.settings)
         rebuildMenu()
     }
 
@@ -77,6 +78,12 @@ final class StatusController {
             title: "Show Drag",
             isOn: settings.showDrag,
             action: #selector(toggleDrag)
+        ))
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(toggleItem(
+            title: "Show Menu Bar Text",
+            isOn: settings.showMenuBarText,
+            action: #selector(toggleMenuBarText)
         ))
         menu.addItem(NSMenuItem.separator())
 
@@ -148,6 +155,12 @@ final class StatusController {
         statusItem.menu = menu
     }
 
+    private func applyStatusItemAppearance(_ settings: ClickSettings) {
+        guard let button = statusItem.button else { return }
+        button.imagePosition = settings.showMenuBarText ? .imageLeading : .imageOnly
+        button.title = settings.showMenuBarText ? "ClickLight" : ""
+    }
+
     private func toggleItem(title: String, isOn: Bool, action: Selector) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
         item.target = self
@@ -192,6 +205,10 @@ final class StatusController {
 
     @objc private func toggleDrag() {
         settingsStore.update { $0.showDrag.toggle() }
+    }
+
+    @objc private func toggleMenuBarText() {
+        settingsStore.update { $0.showMenuBarText.toggle() }
     }
 
     @objc private func selectSize(_ sender: NSMenuItem) {
