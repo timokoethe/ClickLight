@@ -8,17 +8,14 @@ ClickLight is a macOS menu bar app that highlights your clicks during live demos
 
 ## Install
 
-ClickLight does not have a packaged installer yet. Build it locally and copy it into your Applications folder:
+Install with Homebrew:
 
 ```bash
-chmod +x build-app.sh
-./build-app.sh
-mkdir -p "$HOME/Applications"
-cp -R ClickLight.app "$HOME/Applications/ClickLight.app"
-open "$HOME/Applications/ClickLight.app"
+brew tap aurorascharff/clicklight https://github.com/aurorascharff/ClickLight
+brew install --cask aurorascharff/clicklight/clicklight
 ```
 
-More detail: [Installation](docs/INSTALLATION.md)
+Homebrew install will work after the first signed release is published. Until then, or if you prefer building from source, use [Manual Install](docs/MANUAL_INSTALL.md).
 
 ## Features
 
@@ -43,17 +40,16 @@ ClickLight is personal software: one small presentation annoyance, fixed directl
 
 [Local Development](docs/LOCAL_DEVELOPMENT.md)
 
-## How It Is Built
+## Releasing
 
-ClickLight is a Swift Package Manager executable wrapped into a macOS `.app` bundle by `build-app.sh`.
+Release scaffolding is included for Developer ID signing, notarization, Sparkle auto-updates, GitHub Releases, and a Homebrew cask.
 
-[Building Without Xcode](docs/BUILDING_WITHOUT_XCODE.md)
+[Releasing](docs/RELEASING.md)
 
 ## Uninstall
 
 ```bash
-rm -rf "$HOME/Applications/ClickLight.app"
-defaults delete dev.codex.ClickLight
+brew uninstall clicklight
 ```
 
 ## License

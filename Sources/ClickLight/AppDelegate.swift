@@ -8,13 +8,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         settingsStore: settingsStore,
         permissions: permissions,
         captureStatus: { [weak self] in self?.eventTap.statusLabel ?? "Not Started" },
+        onCheckForUpdates: { UpdateChecker.shared.checkForUpdates() },
+        updatesAreConfigured: { UpdateChecker.shared.isConfigured },
         onTestPulse: { [weak self] in self?.showTestPulse() },
         onQuit: { NSApplication.shared.terminate(nil) }
     )
     private let eventTap = ClickEventTap()
     private let permissions = PermissionController()
+    private let updateChecker = UpdateChecker.shared
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        _ = updateChecker
         overlayCoordinator.start()
         permissions.requestAccessibilityIfNeeded()
         eventTap.start()

@@ -1,10 +1,8 @@
-# Installation
+# Manual Install
 
-ClickLight does not currently ship with a signed installer or notarized release package.
+Use this if you want to build ClickLight from source and install the app yourself instead of using Homebrew.
 
-For now, install it by building the app locally and copying `ClickLight.app` into an Applications folder.
-
-## Steps
+## Build And Copy
 
 From the project root:
 
@@ -30,12 +28,20 @@ System Settings -> Privacy & Security -> Accessibility
 
 Enable `ClickLight`, then quit ClickLight from the menu bar and reopen it.
 
-## Verify
+## Rebuild After Changes
 
-Click the ClickLight menu-bar item and choose:
+After changing source files:
 
-```text
-Test Pulse at Pointer
+```bash
+./build-app.sh
+pkill -x ClickLight
+cp -R ClickLight.app "$HOME/Applications/ClickLight.app"
+open "$HOME/Applications/ClickLight.app"
 ```
 
-If you see a pulse, the overlay is working. If normal clicks still do not show pulses, check that Accessibility permission is enabled for the same copy of `ClickLight.app` that you launched.
+## Remove Manual Install
+
+```bash
+rm -rf "$HOME/Applications/ClickLight.app"
+defaults delete dev.codex.ClickLight
+```
