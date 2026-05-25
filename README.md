@@ -18,15 +18,20 @@ Screen recorders like Screen Studio and CleanShot can add click effects to recor
 
 ## Install
 
-> **Release status**
-> Homebrew installation is the intended install path, but the first signed release is pending Apple Developer enrollment. Until the first release is published, use [Manual Install](docs/MANUAL_INSTALL.md).
+> **Homebrew is not available yet**
+> ClickLight does not have a signed release yet, so the Homebrew cask still contains placeholder release metadata and will not install successfully.
 
-After the first signed release is published, install with Homebrew:
+For now, install ClickLight manually from source:
 
-```bash
-brew tap aurorascharff/clicklight https://github.com/aurorascharff/ClickLight
-brew install --cask aurorascharff/clicklight/clicklight
-```
+See [Manual Install](docs/MANUAL_INSTALL.md).
+
+> **Future Homebrew install**
+> Homebrew is still the intended public install path, but it will only work after the first signed release is published.
+>
+> ```bash
+> brew tap aurorascharff/clicklight https://github.com/aurorascharff/ClickLight
+> brew install --cask aurorascharff/clicklight/clicklight
+> ```
 
 ## Features
 
