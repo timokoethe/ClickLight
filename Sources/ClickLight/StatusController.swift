@@ -9,8 +9,10 @@ final class StatusController {
     private let captureStatus: () -> String
     private let onCheckForUpdates: () -> Void
     private let updatesAreConfigured: () -> Bool
+    private let onOpenSettings: () -> Void
     private let onTestPulse: () -> Void
     private let onQuit: () -> Void
+    private var pendingMenuRebuild: DispatchWorkItem?
 
     init(
         settingsStore: SettingsStore,
@@ -19,6 +21,7 @@ final class StatusController {
         captureStatus: @escaping () -> String,
         onCheckForUpdates: @escaping () -> Void,
         updatesAreConfigured: @escaping () -> Bool,
+        onOpenSettings: @escaping () -> Void,
         onTestPulse: @escaping () -> Void,
         onQuit: @escaping () -> Void
     ) {
@@ -28,6 +31,7 @@ final class StatusController {
         self.captureStatus = captureStatus
         self.onCheckForUpdates = onCheckForUpdates
         self.updatesAreConfigured = updatesAreConfigured
+        self.onOpenSettings = onOpenSettings
         self.onTestPulse = onTestPulse
         self.onQuit = onQuit
     }
@@ -48,7 +52,12 @@ final class StatusController {
 
     @objc private func settingsDidChange() {
         applyStatusItemAppearance(settingsStore.settings)
-        rebuildMenu()
+        pendingMenuRebuild?.cancel()
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.rebuildMenu()
+        }
+        pendingMenuRebuild = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: workItem)
     }
 
     private func rebuildMenu() {
@@ -61,6 +70,9 @@ final class StatusController {
             isOn: settings.isEnabled,
             action: #selector(toggleEnabled)
         ))
+        let openSettingsItem = NSMenuItem(title: "Open Settings...", action: #selector(openSettings), keyEquivalent: ",")
+        openSettingsItem.target = self
+        menu.addItem(openSettingsItem)
         menu.addItem(NSMenuItem.separator())
 
         menu.addItem(toggleItem(
@@ -98,34 +110,19 @@ final class StatusController {
 
         menu.addItem(submenu(
             title: "Size",
-            options: [
-                ("Small", 44),
-                ("Medium", 64),
-                ("Large", 88),
-                ("Huge", 116)
-            ],
-            selected: settings.size,
+            options: ClickSettingOptions.sizePresets,
+            selected: Double(settings.size),
             action: #selector(selectSize(_:))
         ))
         menu.addItem(submenu(
             title: "Intensity",
-            options: [
-                ("Subtle", 0.28),
-                ("Normal", 0.7),
-                ("Bright", 1.0),
-                ("Beacon", 1.35)
-            ],
-            selected: settings.intensity,
+            options: ClickSettingOptions.intensityPresets,
+            selected: Double(settings.intensity),
             action: #selector(selectIntensity(_:))
         ))
         menu.addItem(submenu(
             title: "Duration",
-            options: [
-                ("Snappy", 0.28),
-                ("Normal", 0.48),
-                ("Slow", 0.72),
-                ("Very Slow", 1.0)
-            ],
+            options: ClickSettingOptions.durationPresets,
             selected: settings.duration,
             action: #selector(selectDuration(_:))
         ))
@@ -181,18 +178,26 @@ final class StatusController {
 
     private func submenu(
         title: String,
-        options: [(String, Double)],
-        selected: CGFloat,
+        options: [ClickNumericPreset],
+        selected: Double,
         action: Selector
     ) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
         let menu = NSMenu()
+        let selectedPreset = options.first { abs($0.value - selected) < 0.01 }
         for option in options {
-            let child = NSMenuItem(title: option.0, action: action, keyEquivalent: "")
+            let child = NSMenuItem(title: option.title, action: action, keyEquivalent: "")
             child.target = self
-            child.representedObject = option.1
-            child.state = abs(Double(selected) - option.1) < 0.01 ? .on : .off
+            child.representedObject = option.value
+            child.state = selectedPreset?.value == option.value ? .on : .off
             menu.addItem(child)
+        }
+        if selectedPreset == nil {
+            menu.addItem(NSMenuItem.separator())
+            let custom = NSMenuItem(title: "Custom", action: nil, keyEquivalent: "")
+            custom.state = .on
+            custom.isEnabled = false
+            menu.addItem(custom)
         }
         item.submenu = menu
         return item
@@ -214,6 +219,10 @@ final class StatusController {
 
     @objc private func toggleEnabled() {
         settingsStore.update { $0.isEnabled.toggle() }
+    }
+
+    @objc private func openSettings() {
+        onOpenSettings()
     }
 
     @objc private func togglePress() {
