@@ -9,17 +9,16 @@ struct ClickLightSettingsView: View {
     var body: some View {
         NavigationSplitView {
             List(SettingsPane.allCases, id: \.self, selection: $selectedPane) { pane in
-                NavigationLink(value: pane) {
-                    Label {
-                        Text(pane.title)
-                            .font(.system(size: 13, weight: .medium))
-                    } icon: {
-                        Image(systemName: pane.icon)
-                            .symbolRenderingMode(.monochrome)
-                            .foregroundStyle(.primary)
-                    }
-                    .padding(.vertical, 2)
+                Label {
+                    Text(pane.title)
+                        .font(.system(size: 13, weight: .medium))
+                } icon: {
+                    Image(systemName: pane.icon)
+                        .symbolRenderingMode(.monochrome)
+                        .foregroundStyle(.primary)
                 }
+                .padding(.vertical, 2)
+                .tag(pane)
             }
             .listStyle(.sidebar)
             .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 240)
@@ -126,6 +125,18 @@ struct ClickLightSettingsView: View {
 
     private var stylePane: some View {
         VStack(spacing: 16) {
+            SettingsCard {
+                ModernRow(title: "Preview",
+                          subtitle: "Show the current pulse style at the pointer.") {
+                    Button {
+                        viewModel.previewPulse()
+                    } label: {
+                        Label("Preview Pulse", systemImage: "cursorarrow.click.2")
+                    }
+                    .controlSize(.regular)
+                }
+            }
+
             SettingsCard(title: "Size", subtitle: "How large the click pulse appears.") {
                 VStack(alignment: .leading, spacing: 16) {
                     presetSegmented(

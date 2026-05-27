@@ -8,12 +8,14 @@ final class SettingsWindowController: NSWindowController {
     init(
         settingsStore: SettingsStore,
         launchAtLogin: LaunchAtLoginManaging,
-        permissions: PermissionController
+        permissions: PermissionController,
+        onTestPulse: @escaping () -> Void
     ) {
         let viewModel = ClickLightSettingsViewModel(
             settingsStore: settingsStore,
             launchAtLogin: launchAtLogin,
-            permissions: permissions
+            permissions: permissions,
+            onTestPulse: onTestPulse
         )
         self.viewModel = viewModel
 
@@ -41,6 +43,11 @@ final class SettingsWindowController: NSWindowController {
         window.orderFrontRegardless()
         viewModel.refreshSystemState()
     }
+
+    func contains(_ screenPoint: NSPoint) -> Bool {
+        guard let window, window.isVisible else { return false }
+        return window.frame.contains(screenPoint)
+    }
 }
 
 @MainActor
@@ -48,7 +55,9 @@ final class ClickLightSettingsViewModel: NSObject, ObservableObject {
     private let settingsStore: SettingsStore
     private let launchAtLogin: LaunchAtLoginManaging
     private let permissions: PermissionController
+    private let onTestPulse: () -> Void
 
+    @Published private(set) var settings: ClickSettings
     @Published private(set) var launchAtLoginEnabled: Bool = false
     @Published private(set) var accessibilityTrusted: Bool = false
     @Published var launchAtLoginErrorMessage: String?
@@ -56,11 +65,14 @@ final class ClickLightSettingsViewModel: NSObject, ObservableObject {
     init(
         settingsStore: SettingsStore,
         launchAtLogin: LaunchAtLoginManaging,
-        permissions: PermissionController
+        permissions: PermissionController,
+        onTestPulse: @escaping () -> Void
     ) {
         self.settingsStore = settingsStore
         self.launchAtLogin = launchAtLogin
         self.permissions = permissions
+        self.onTestPulse = onTestPulse
+        self.settings = settingsStore.settings
         super.init()
         self.launchAtLoginEnabled = launchAtLogin.isEnabled
         self.accessibilityTrusted = permissions.isAccessibilityTrusted
@@ -83,7 +95,10 @@ final class ClickLightSettingsViewModel: NSObject, ObservableObject {
     }
 
     @objc private func settingsDidChange() {
-        objectWillChange.send()
+        let latestSettings = settingsStore.settings
+        if settings != latestSettings {
+            settings = latestSettings
+        }
     }
 
     @objc private func appBecameActive() {
@@ -110,10 +125,6 @@ final class ClickLightSettingsViewModel: NSObject, ObservableObject {
         permissions.openPrivacySettings()
     }
 
-    var settings: ClickSettings {
-        settingsStore.settings
-    }
-
     var sizePresetSelection: String {
         guard let preset = ClickSettingOptions.matchingPreset(for: settings.size, in: ClickSettingOptions.sizePresets) else {
             return "custom"
@@ -136,27 +147,29 @@ final class ClickLightSettingsViewModel: NSObject, ObservableObject {
     }
 
     func update(_ mutate: (inout ClickSettings) -> Void) {
-        settingsStore.update(mutate)
+        var updatedSettings = settings
+        mutate(&updatedSettings)
+        apply(updatedSettings)
     }
 
     func applySizePresetSelection(_ selection: String) {
         guard let value = Double(selection) else { return }
-        settingsStore.update { $0.size = CGFloat(value) }
+        update { $0.size = CGFloat(value) }
     }
 
     func applyIntensityPresetSelection(_ selection: String) {
         guard let value = Double(selection) else { return }
-        settingsStore.update { $0.intensity = CGFloat(value) }
+        update { $0.intensity = CGFloat(value) }
     }
 
     func applyDurationPresetSelection(_ selection: String) {
         guard let value = Double(selection) else { return }
-        settingsStore.update { $0.duration = value }
+        update { $0.duration = value }
     }
 
     func applyCustomColor(_ color: NSColor) {
         guard let rgb = color.usingColorSpace(.deviceRGB) else { return }
-        settingsStore.update {
+        update {
             $0.customColorRed = rgb.redComponent
             $0.customColorGreen = rgb.greenComponent
             $0.customColorBlue = rgb.blueComponent
@@ -164,7 +177,21 @@ final class ClickLightSettingsViewModel: NSObject, ObservableObject {
         }
     }
 
+    func previewPulse() {
+        onTestPulse()
+    }
+
     func resetToDefaults() {
-        settingsStore.settings = .defaults
+        apply(.defaults)
+    }
+
+    private func apply(_ updatedSettings: ClickSettings) {
+        guard settings != updatedSettings else { return }
+        settings = updatedSettings
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.settings == updatedSettings else { return }
+            self.settingsStore.settings = updatedSettings
+        }
     }
 }

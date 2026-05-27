@@ -3,11 +3,7 @@ import AppKit
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let settingsStore = SettingsStore()
-    private lazy var settingsWindowController = SettingsWindowController(
-        settingsStore: settingsStore,
-        launchAtLogin: launchAtLogin,
-        permissions: permissions
-    )
+    private var settingsWindowController: SettingsWindowController?
     private lazy var overlayCoordinator = OverlayCoordinator(settingsStore: settingsStore)
     private lazy var captureController = ClickCaptureController(settingsStore: settingsStore, eventTap: eventTap)
     private lazy var statusController = StatusController(
@@ -61,6 +57,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func clickEventDidArrive(_ notification: Notification) {
         guard let box = notification.object as? ClickEventBox else { return }
+        guard settingsWindowController?.contains(box.event.location) != true else { return }
         overlayCoordinator.show(box.event)
     }
 
@@ -73,6 +70,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func openSettings() {
-        settingsWindowController.show()
+        let controller = settingsWindowController ?? SettingsWindowController(
+            settingsStore: settingsStore,
+            launchAtLogin: launchAtLogin,
+            permissions: permissions,
+            onTestPulse: { [weak self] in self?.showTestPulse() }
+        )
+        settingsWindowController = controller
+        controller.show()
     }
 }
