@@ -47,9 +47,9 @@ final class ClickOverlayView: NSView {
             case .drag:
                 appendLaserPoint(localPoint)
                 return
-            case .leftUp, .rightUp:
+            case .leftUp, .rightUp, .middleUp:
                 completeLaserStroke()
-            case .leftDown, .rightDown:
+            case .leftDown, .rightDown, .middleDown:
                 break
             }
         }
@@ -441,6 +441,8 @@ final class ClickOverlayView: NSView {
             return settings.showRelease
         case .rightDown, .rightUp:
             return settings.showRightClick
+        case .middleDown, .middleUp:
+            return settings.showMiddleClick
         case .drag:
             return settings.showDrag && !settings.showLaserPointer
         case .move:
