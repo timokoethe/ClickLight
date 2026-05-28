@@ -40,10 +40,27 @@ Prefer not to use Homebrew? Download `ClickLight.zip` from [GitHub Releases](htt
 - Dedicated settings window with sliders + presets for size, duration, intensity, and color
 - Custom color picker in Settings
 - Menu-bar quick presets for size, duration, intensity, and color
+- Configurable global shortcuts for toggling ClickLight and individual click visuals
 - Optional compact menu-bar icon
 - Test pulse for verifying overlay behavior
 - Native Swift/AppKit app
 - No Xcode project required
+
+## Keyboard Shortcuts
+
+ClickLight includes global shortcuts for quick toggles during demos:
+
+| Shortcut | Action |
+| --- | --- |
+| `⌥⌘1` | Toggle ClickLight on/off |
+| `⌥⌘2` | Toggle Laser Pointer Mode |
+| `⌥⌘3` | Toggle Show Press |
+| `⌥⌘4` | Toggle Show Release |
+| `⌥⌘5` | Toggle Show Right Click |
+| `⌥⌘6` | Toggle Show Middle Click |
+| `⌥⌘7` | Toggle Show Drag |
+
+Shortcuts can be changed or cleared in Settings. See [Global Shortcuts](docs/GLOBAL_SHORTCUTS.md) for implementation notes.
 
 ## Permissions
 
