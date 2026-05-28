@@ -47,18 +47,21 @@ struct ClickSettings: Equatable {
 
 enum ClickColorPreset: String, CaseIterable, Equatable {
     case `default`
-    case custom
+    case primary
     case blue
     case green
     case purple
     case pink
     case orange
     case white
+    case custom
 
     var title: String {
         switch self {
         case .default:
             return "Default"
+        case .primary:
+            return "Primary"
         case .custom:
             return "Custom"
         case .blue:
@@ -80,6 +83,8 @@ enum ClickColorPreset: String, CaseIterable, Equatable {
         switch self {
         case .default:
             return nil
+        case .primary:
+            return NSColor.controlAccentColor
         case .custom:
             return nil
         case .blue:
