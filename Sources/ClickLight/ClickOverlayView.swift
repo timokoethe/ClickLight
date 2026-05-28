@@ -439,10 +439,14 @@ final class ClickOverlayView: NSView {
             return settings.showPress
         case .leftUp:
             return settings.showRelease
-        case .rightDown, .rightUp:
+        case .rightDown:
             return settings.showRightClick
-        case .middleDown, .middleUp:
+        case .rightUp:
+            return settings.showRightClick && settings.showRelease
+        case .middleDown:
             return settings.showMiddleClick
+        case .middleUp:
+            return settings.showMiddleClick && settings.showRelease
         case .drag:
             return settings.showDrag && !settings.showLaserPointer
         case .move:
