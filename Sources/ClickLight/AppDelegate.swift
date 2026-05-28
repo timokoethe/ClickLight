@@ -56,7 +56,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func appDidBecomeActive() {
-        launchAtLogin.refresh()
         statusController.refresh()
     }
 

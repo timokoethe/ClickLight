@@ -5,7 +5,6 @@ import ServiceManagement
 protocol LaunchAtLoginManaging {
     var isEnabled: Bool { get }
     func setEnabled(_ enabled: Bool) throws
-    func refresh()
 }
 
 enum LaunchAtLoginState {
@@ -16,10 +15,8 @@ enum LaunchAtLoginState {
 
 @MainActor
 final class LaunchAtLoginController: LaunchAtLoginManaging {
-    private var cachedIsEnabled = SMAppService.mainApp.status == .enabled
-
     var isEnabled: Bool {
-        cachedIsEnabled
+        SMAppService.mainApp.status == .enabled
     }
 
     func setEnabled(_ enabled: Bool) throws {
@@ -28,10 +25,5 @@ final class LaunchAtLoginController: LaunchAtLoginManaging {
         } else {
             try SMAppService.mainApp.unregister()
         }
-        refresh()
-    }
-
-    func refresh() {
-        cachedIsEnabled = SMAppService.mainApp.status == .enabled
     }
 }
