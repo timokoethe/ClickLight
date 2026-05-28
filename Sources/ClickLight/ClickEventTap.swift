@@ -38,6 +38,8 @@ final class ClickEventTap: ClickEventCapturing {
             CGEventType.leftMouseUp,
             CGEventType.rightMouseDown,
             CGEventType.rightMouseUp,
+            CGEventType.otherMouseDown,
+            CGEventType.otherMouseUp,
             CGEventType.leftMouseDragged,
             CGEventType.rightMouseDragged,
             CGEventType.otherMouseDragged
@@ -87,6 +89,8 @@ final class ClickEventTap: ClickEventCapturing {
             .leftMouseUp,
             .rightMouseDown,
             .rightMouseUp,
+            .otherMouseDown,
+            .otherMouseUp,
             .leftMouseDragged,
             .rightMouseDragged,
             .otherMouseDragged
@@ -111,7 +115,7 @@ final class ClickEventTap: ClickEventCapturing {
             return Unmanaged.passUnretained(event)
         }
 
-        guard let kind = ClickKind(type: type) else {
+        guard let kind = ClickKind(type: type, event: event) else {
             return Unmanaged.passUnretained(event)
         }
 
@@ -147,7 +151,7 @@ private func eventTapCallback(
 }
 
 private extension ClickKind {
-    init?(type: CGEventType) {
+    init?(type: CGEventType, event: CGEvent) {
         switch type {
         case .leftMouseDown:
             self = .leftDown
@@ -157,6 +161,10 @@ private extension ClickKind {
             self = .rightDown
         case .rightMouseUp:
             self = .rightUp
+        case .otherMouseDown where event.buttonNumber == 2:
+            self = .middleDown
+        case .otherMouseUp where event.buttonNumber == 2:
+            self = .middleUp
         case .leftMouseDragged, .rightMouseDragged, .otherMouseDragged:
             self = .drag
         default:
@@ -174,6 +182,10 @@ private extension ClickKind {
             self = .rightDown
         case .rightMouseUp:
             self = .rightUp
+        case .otherMouseDown where event.buttonNumber == 2:
+            self = .middleDown
+        case .otherMouseUp where event.buttonNumber == 2:
+            self = .middleUp
         case .leftMouseDragged, .rightMouseDragged, .otherMouseDragged:
             self = .drag
         default:
@@ -183,6 +195,10 @@ private extension ClickKind {
 }
 
 private extension CGEvent {
+    var buttonNumber: Int64 {
+        getIntegerValueField(.mouseEventButtonNumber)
+    }
+
     var timestampSeconds: TimeInterval {
         TimeInterval(timestamp) / 1_000_000_000
     }

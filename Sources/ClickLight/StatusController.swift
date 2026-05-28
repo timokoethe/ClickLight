@@ -91,6 +91,11 @@ final class StatusController {
             action: #selector(toggleRightClick)
         ))
         menu.addItem(toggleItem(
+            title: "Show Middle Click",
+            isOn: settings.showMiddleClick,
+            action: #selector(toggleMiddleClick)
+        ))
+        menu.addItem(toggleItem(
             title: "Show Drag",
             isOn: settings.showDrag,
             action: #selector(toggleDrag)
@@ -235,6 +240,10 @@ final class StatusController {
 
     @objc private func toggleRightClick() {
         settingsStore.update { $0.showRightClick.toggle() }
+    }
+
+    @objc private func toggleMiddleClick() {
+        settingsStore.update { $0.showMiddleClick.toggle() }
     }
 
     @objc private func toggleDrag() {

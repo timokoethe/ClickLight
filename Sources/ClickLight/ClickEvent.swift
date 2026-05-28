@@ -5,10 +5,12 @@ enum ClickKind: Sendable {
     case leftUp
     case rightDown
     case rightUp
+    case middleDown
+    case middleUp
     case drag
 
     var isRelease: Bool {
-        self == .leftUp || self == .rightUp
+        self == .leftUp || self == .rightUp || self == .middleUp
     }
 }
 

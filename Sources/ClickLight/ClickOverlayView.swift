@@ -145,6 +145,34 @@ final class ClickOverlayView: NSView {
                 alpha: releaseAlpha
             )
             drawCrosshair(context: context, point: pulse.point, size: pulse.baseSize * (0.16 + 0.08 * fade), color: pulse.color, alpha: releaseAlpha * 0.7)
+        case .middleDown:
+            drawGlowIfNeeded(
+                context: context,
+                point: pulse.point,
+                radius: pulse.baseSize * (0.26 + 0.68 * eased),
+                color: pulse.color,
+                alpha: fade * visualIntensity
+            )
+            drawRing(
+                context: context,
+                point: pulse.point,
+                radius: pulse.baseSize * (0.16 + 0.52 * eased),
+                lineWidth: lineWidth,
+                color: pulse.color,
+                alpha: alpha
+            )
+            drawDiamond(context: context, point: pulse.point, size: pulse.baseSize * 0.24, color: pulse.color, alpha: alpha * 0.86)
+        case .middleUp:
+            let releaseSize = pulse.baseSize * (0.32 - 0.12 * eased)
+            let releaseAlpha = alpha * 0.5
+            drawGlowIfNeeded(
+                context: context,
+                point: pulse.point,
+                radius: pulse.baseSize * (0.42 - 0.12 * eased),
+                color: pulse.color,
+                alpha: fade * visualIntensity * 0.38
+            )
+            drawDiamond(context: context, point: pulse.point, size: releaseSize, color: pulse.color, alpha: releaseAlpha * 0.82)
         case .drag:
             drawDot(
                 context: context,
@@ -214,6 +242,16 @@ final class ClickOverlayView: NSView {
         context.strokePath()
     }
 
+    private func drawDiamond(context: CGContext, point: CGPoint, size: CGFloat, color: NSColor, alpha: CGFloat) {
+        context.setFillColor(color.withAlphaComponent(alpha).cgColor)
+        context.move(to: CGPoint(x: point.x, y: point.y + size))
+        context.addLine(to: CGPoint(x: point.x + size, y: point.y))
+        context.addLine(to: CGPoint(x: point.x, y: point.y - size))
+        context.addLine(to: CGPoint(x: point.x - size, y: point.y))
+        context.closePath()
+        context.fillPath()
+    }
+
     private func startDisplayLink() {
         guard displayLink == nil else { return }
         displayLink = Timer(timeInterval: 1.0 / 60.0, target: self, selector: #selector(displayLinkDidTick), userInfo: nil, repeats: true)
@@ -245,6 +283,8 @@ final class ClickOverlayView: NSView {
             return NSColor(calibratedRed: 0.4, green: 0.88, blue: 1.0, alpha: 1)
         case .rightDown, .rightUp:
             return NSColor(calibratedRed: 1.0, green: 0.46, blue: 0.19, alpha: 1)
+        case .middleDown, .middleUp:
+            return NSColor(calibratedRed: 0.27, green: 0.92, blue: 0.58, alpha: 1)
         case .drag:
             return NSColor(calibratedRed: 0.92, green: 0.84, blue: 0.22, alpha: 1)
         }
@@ -254,9 +294,9 @@ final class ClickOverlayView: NSView {
         switch kind {
         case .drag:
             return min(0.38, settings.duration * 0.82)
-        case .leftUp, .rightUp:
+        case .leftUp, .rightUp, .middleUp:
             return settings.duration * 0.78
-        case .leftDown, .rightDown:
+        case .leftDown, .rightDown, .middleDown:
             return settings.duration
         }
     }
@@ -265,9 +305,9 @@ final class ClickOverlayView: NSView {
         switch kind {
         case .drag:
             return settings.size * 0.6
-        case .leftUp, .rightUp:
+        case .leftUp, .rightUp, .middleUp:
             return settings.size * 0.82
-        case .leftDown, .rightDown:
+        case .leftDown, .rightDown, .middleDown:
             return settings.size
         }
     }

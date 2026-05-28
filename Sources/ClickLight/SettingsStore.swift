@@ -5,6 +5,7 @@ struct ClickSettings: Equatable {
     var showPress: Bool
     var showRelease: Bool
     var showRightClick: Bool
+    var showMiddleClick: Bool
     var showDrag: Bool
     var showMenuBarText: Bool
     var size: CGFloat
@@ -29,6 +30,7 @@ struct ClickSettings: Equatable {
         showPress: true,
         showRelease: true,
         showRightClick: true,
+        showMiddleClick: true,
         showDrag: true,
         showMenuBarText: false,
         size: 64,
@@ -103,6 +105,7 @@ final class SettingsStore {
         static let showPress = "showPress"
         static let showRelease = "showRelease"
         static let showRightClick = "showRightClick"
+        static let showMiddleClick = "showMiddleClick"
         static let showDrag = "showDrag"
         static let showMenuBarText = "showMenuBarText"
         static let size = "size"
@@ -128,6 +131,7 @@ final class SettingsStore {
                 showPress: defaults.bool(forKey: Key.showPress),
                 showRelease: defaults.bool(forKey: Key.showRelease),
                 showRightClick: defaults.bool(forKey: Key.showRightClick),
+                showMiddleClick: defaults.bool(forKey: Key.showMiddleClick),
                 showDrag: defaults.bool(forKey: Key.showDrag),
                 showMenuBarText: defaults.bool(forKey: Key.showMenuBarText),
                 size: CGFloat(defaults.double(forKey: Key.size)),
@@ -144,6 +148,7 @@ final class SettingsStore {
             defaults.set(newValue.showPress, forKey: Key.showPress)
             defaults.set(newValue.showRelease, forKey: Key.showRelease)
             defaults.set(newValue.showRightClick, forKey: Key.showRightClick)
+            defaults.set(newValue.showMiddleClick, forKey: Key.showMiddleClick)
             defaults.set(newValue.showDrag, forKey: Key.showDrag)
             defaults.set(newValue.showMenuBarText, forKey: Key.showMenuBarText)
             defaults.set(Double(newValue.size), forKey: Key.size)
@@ -170,6 +175,7 @@ final class SettingsStore {
             Key.showPress: defaults.showPress,
             Key.showRelease: defaults.showRelease,
             Key.showRightClick: defaults.showRightClick,
+            Key.showMiddleClick: defaults.showMiddleClick,
             Key.showDrag: defaults.showDrag,
             Key.showMenuBarText: defaults.showMenuBarText,
             Key.size: Double(defaults.size),
