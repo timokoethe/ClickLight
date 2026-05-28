@@ -53,7 +53,12 @@ ClickLight includes one default global shortcut for quick toggles during demos. 
 | Shortcut | Action |
 | --- | --- |
 | `Control + Option + Command + L` | Toggle ClickLight on/off |
-| Not set by default | Laser pointer mode and individual click visuals |
+| Not set by default | Toggle Laser Pointer Mode |
+| Not set by default | Toggle Press |
+| Not set by default | Toggle Release |
+| Not set by default | Toggle Right Click |
+| Not set by default | Toggle Middle Click |
+| Not set by default | Toggle Drag |
 
 All shortcuts can be changed or disabled in Settings.
 
